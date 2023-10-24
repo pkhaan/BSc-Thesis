@@ -2,7 +2,7 @@
 # BSc-Thesis by [Petros Chanas]()
 ## [Athens University of Economics and Business, Department of Informatics](https://www.dept.aueb.gr/en/infotech-overview-en)
 ## [Computer Graphics Group, AUEB](http://graphics.cs.aueb.gr/graphics/index.html)
-![assets/CGAUEB](Untitled.png)
+![CGAUEB](assets/Untitled.png)
 ### This repository contains the code for my BSc-Thesis in Computer Graphics regarding lenticular lenses and surfaces and ways to understand them using notions like texture mapping and blending, [BRDFs](https://en.wikipedia.org/wiki/Bidirectional_reflectance_distribution_function) and [BSDFs](https://en.wikipedia.org/wiki/Bidirectional_scattering_distribution_function), ambient occlusion and various others. This research aims to shed some light to the behavior of said surfaces by carefully breaking it down to modular parts that are directly connected to CG theory. To carry out the experiments I used Unity's [ShaderLab](https://docs.unity3d.com/Manual/SL-Reference.html). You can find the full paper in english [here](https://www.icloud.com/iclouddrive/0ffonv-sIB5OrABFOPdtu9fjw#Lenticular%5FLenses%5Fand%5FSurfaces) and the greek report [here](https://www.icloud.com/iclouddrive/022v7HvCDFMrQINvU9GD5s1Lw#%CE%A0%CF%84%CF%85%CF%87%CE%B9%CE%B1%CE%BA%CE%AE_%CE%95%CF%81%CE%B3%CE%B1%CF%83%CE%AF%CE%B1_%CE%A0%CE%AD%CF%84%CF%81%CE%BF%CF%85_%CE%A7%CE%AC%CE%BD%CE%B1)
 
 ## Explaining the Problem
