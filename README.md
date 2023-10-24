@@ -3,7 +3,7 @@
 ## [Athens University of Economics and Business, Department of Informatics](https://www.dept.aueb.gr/en/infotech-overview-en)
 ## [Computer Graphics Group, AUEB](http://graphics.cs.aueb.gr/graphics/index.html)
 ![CGAUEB](assets/Untitled.png)
-### This repository contains the code for my BSc-Thesis in Computer Graphics regarding lenticular lenses and surfaces and ways to understand them using notions like texture mapping and blending, [BRDFs](https://en.wikipedia.org/wiki/Bidirectional_reflectance_distribution_function) and [BSDFs](https://en.wikipedia.org/wiki/Bidirectional_scattering_distribution_function), ambient occlusion and various others. This research aims to shed some light to the behavior of said surfaces by carefully breaking it down to modular parts that are directly connected to CG theory. To carry out the experiments I used Unity's [ShaderLab](https://docs.unity3d.com/Manual/SL-Reference.html). You can find the full paper in english [here](https://www.icloud.com/iclouddrive/0ffonv-sIB5OrABFOPdtu9fjw#Lenticular%5FLenses%5Fand%5FSurfaces) and the greek report [here](https://www.icloud.com/iclouddrive/022v7HvCDFMrQINvU9GD5s1Lw#%CE%A0%CF%84%CF%85%CF%87%CE%B9%CE%B1%CE%BA%CE%AE_%CE%95%CF%81%CE%B3%CE%B1%CF%83%CE%AF%CE%B1_%CE%A0%CE%AD%CF%84%CF%81%CE%BF%CF%85_%CE%A7%CE%AC%CE%BD%CE%B1)
+### This repository contains the code for my BSc-Thesis in Computer Graphics regarding lenticular lenses and surfaces and ways to understand them using notions like texture mapping and blending, [BRDFs](https://en.wikipedia.org/wiki/Bidirectional_reflectance_distribution_function) and [BSDFs](https://en.wikipedia.org/wiki/Bidirectional_scattering_distribution_function), ambient occlusion and various others. This research aims to shed some light to the behavior of said surfaces by carefully breaking it down to modular parts that are directly connected to CG theory. To carry out the experiments I used Unity's [ShaderLab](https://docs.unity3d.com/Manual/SL-Reference.html). You can find the full paper in english [here](https://www.icloud.com/iclouddrive/0ffonv-sIB5OrABFOPdtu9fjw#Lenticular%5FLenses%5Fand%5FSurfaces) and the report in greek [here](https://www.icloud.com/iclouddrive/022v7HvCDFMrQINvU9GD5s1Lw#%CE%A0%CF%84%CF%85%CF%87%CE%B9%CE%B1%CE%BA%CE%AE_%CE%95%CF%81%CE%B3%CE%B1%CF%83%CE%AF%CE%B1_%CE%A0%CE%AD%CF%84%CF%81%CE%BF%CF%85_%CE%A7%CE%AC%CE%BD%CE%B1).
 
 ## Explaining the Problem
 A particular arrangement of convex and concave lenses
@@ -21,9 +21,7 @@ the angle of incidence of the light ray and the refractive
 index of the material. To calculate the direction of light
 refraction as it goes through the lens, lenticular lenses use
 Snell’s law. The law of refraction, often known as Snell’s
-law, describes how light bends as it travels through var-
-ious media. The rule asserts that the ratio of the refrac-
-tive indices of the two media is equal to the sines of the
+law, describes how light bends as it travels through various media. The rule asserts that the ratio of the refractive indices of the two media is equal to the sines of the
 angles of incidence and refraction of a light ray.
 
 ![Example of Lenticular Grated Surface](assets/retrospect.png "Example of Lenticular Grated Surface (Old Telephone Card)")
@@ -104,8 +102,8 @@ float G_Smith(float3 normal, float3 viewDir, float3 lightDir, float roughness)
         }
 ```
 
-#### Trowbridge-Reitz Distribution Function $(D_{GGX})$
-The Trowbridge-Reitz distribution function, also known as a variant of the \textbf{Beckmann-Spizzichino} distribution function, is a mathematical function used in the Cook-Torrance lighting model to describe the distribution of microfacets on a rough surface. It determines the probability density of the surface normals of these microfacets. The normalized form of the distribution is as follows:
+#### Trowbridge-Reitz Distribution Function 
+The Trowbridge-Reitz distribution function $(D_{GGX})$, also known as a variant of the \textbf{Beckmann-Spizzichino} distribution function, is a mathematical function used in the Cook-Torrance lighting model to describe the distribution of microfacets on a rough surface. It determines the probability density of the surface normals of these microfacets. The normalized form of the distribution is as follows:
 $$D(\omega_h) = \frac{1}{\pi a_xa_y\cos^4\theta_h(1+\tan^2\theta_h(\frac{\cos^2\phi_x}{a^2_x}+\frac{\sin^2\phi_h}{a^2_y}))^2}$$
 where $\omega_h$ is the differential area of microfacets with the surface normal. In comparison to the Beckmann–Spizzichino model, Trowbridge–Reitz has higher tails—it falls off to zero more slowly for directions far from the surface normal. This characteristic matches the properties of many real-world surfaces well.
 ```GLSL
