@@ -1,4 +1,4 @@
-![AUEB BANNER](Untitled-1.jpg)
+![AUEB BANNER](assets/Untitled-1.jpg)
 # BSc-Thesis by [Petros Chanas]()
 ## [Athens University of Economics and Business, Department of Informatics](https://www.dept.aueb.gr/en/infotech-overview-en)
 ## [Computer Graphics Group, AUEB](http://graphics.cs.aueb.gr/graphics/index.html)
