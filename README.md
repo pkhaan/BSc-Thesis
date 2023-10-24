@@ -76,15 +76,45 @@ In our experiment we use the following structure via helper functions:
 #### Schlick's Approximation
  $F_{schlick}(specular_{color}, \cos \theta)$.In detail we can mathemtically represent this operation as $R(\theta) = R_0 + (1-R_0)(1 - \cos\theta)^5$. In our case R is the reflection coefficient and is equal to $(\frac{n_1 - n_2}{n_1 + n_2})^2$ where  $\theta$ is the angle between the direction from which the incident light is coming and the normal of the interface between the two media, hence $\cos \theta =(N\cdot V)$. And $n_{1},n_{2}$ are the indices of refraction of the two media at the interface and $R_{0}$ is the reflection coefficient for light incoming parallel to the normal (i.e., the value of the Fresnel term when $\theta =0$ or minimal reflection.
 
+ ```GLSL
+ float3 F_Schlick(float3 specularColor, float cosTheta)
+        {
+        return specularColor + (1.0 - specularColor) * pow(1.0 - cosTheta, 5.0);
+        }
+ ```
+
 #### Smith's Geometric Term
 In microfacet models such as the Cook-Torrance one the Smith geometric term is used to account for the masking and shadowing effects. It modifies the specular reflection term by considering the visibility of the microfacets from both the viewer's and the light's perspectives. It can properly be dissected as the product of 2 main visibilty functions: the viewer's perspective $(V)$ and the ligth's perspective $(L)$. As it accounts for the occlusion of microfacets by other microfacets in the surface seen by the viewers direction solely it can be mathematically be reprsented as:
 $$V = \frac{G_v}{G_v + G_l - G_v * G_l + \epsilon}$$
 where $G_v$ is the geometric attenuation factor for the viewer's perspective, $G_l$ is the geometric attenuation factor for the light's perspective and $\epsilon$  is a small value for safe division by zero. The Smith term for the light's perspective represents the visibility of the microfacets as seen from the light's direction. It accounts for the occlusion of microfacets by other microfacets in the surface. The equation for $L$ is similar to that of $V$
 
+```GLSL
+float G_Smith(float3 normal, float3 viewDir, float3 lightDir, float roughness)
+        {
+        float nDotV = max(dot(normal, viewDir), 0.0);
+        float nDotL = max(dot(normal, lightDir), 0.0);
+        float k = (roughness + 1.0) * (roughness + 1.0) / 8.0;
+        float gl = nDotV / (nDotV * (1.0 - k) + k);
+        float gv = nDotL / (nDotL * (1.0 - k) + k);
+        return gl * gv;
+        }
+```
+
 #### Trowbridge-Reitz Distribution Function $(D_{GGX})$
 The Trowbridge-Reitz distribution function, also known as a variant of the \textbf{Beckmann-Spizzichino} distribution function, is a mathematical function used in the Cook-Torrance lighting model to describe the distribution of microfacets on a rough surface. It determines the probability density of the surface normals of these microfacets. The normalized form of the distribution is as follows:
 $$D(\omega_h) = \frac{1}{\pi a_xa_y\cos^4\theta_h(1+\tan^2\theta_h(\frac{\cos^2\phi_x}{a^2_x}+\frac{\sin^2\phi_h}{a^2_y}))^2}$$
 where $\omega_h$ is the differential area of microfacets with the surface normal. In comparison to the Beckmann–Spizzichino model, Trowbridge–Reitz has higher tails—it falls off to zero more slowly for directions far from the surface normal. This characteristic matches the properties of many real-world surfaces well.
+```GLSL
+ float D_GGX(float3 normal, float3 halfwayDir, float roughness)
+         {
+            float alpha = roughness * roughness;
+            float alphaSqr = alpha * alpha;
+            float nDotH = max(dot(normal, halfwayDir), 0.0);
+            float nDotHSqr = nDotH * nDotH;
+            float denom = nDotHSqr * (alphaSqr - 1.0) + 1.0;
+            return alphaSqr / (3.14159 * denom * denom);
+        }
+```
 
 ### Oren-Nayar Ligting Model
 We have \textbf{Lambertian BRDF} which is a theoretical model describing perfect diffuse reflection and **microfacet BRDF** which are based on geometrical optics theory, where a surface is covered with microfacets and described by means of statistical distributions. **Oren-Nayar BRDF** is an improvement over the theoretical Lambertian model, applying distribution of purely diffuse microfacets. It accounts for the roughness of a surface and how it scatters light. The model introduces a parameter called $\sigma$ which represents the standard deviation of the surface's microfacets. The model calculates the amount of reflected light by considering the angle between the incident light vector and the surface normal, as well as the angle between the view direction and the surface normal. It incorporates a cosine term to represent Lambertian diffuse reflection, and an additional term that depends on the roughness of the surface, introducing a roughness factor into the reflected light calculation.
@@ -96,3 +126,14 @@ We have \textbf{Lambertian BRDF} which is a theoretical model describing perfect
 In order to preserve a material we have to capture and reproduce the way in which in interacts with incoming lighting under different illumination settings. Such property is relevant in digital preservation and physical based rendering as it correlates with material representations as functions instead of just constant colors. For example, we use the scattering equation to illustrate how such a function influences the calculation of the outgoing distribution of light at a point $p$ and a direction $\omega_o$
 $$L_o(p, \omega) = \int_{S^{2}}f(p, \omega_o, \omega_i)L_i(p, \omega_i)|\cos\theta_i|d\omega_i$$
 This equation describes $L_o(p, \omega_i)$ through the integration of the incident light at $p, L_i(p, \omega_i)$ coming from all directions $\omega_i$ in the unit sphere and taking the scattering properties of our material in consideration. The BRDF $f(p, \omega_o, \omega_i)$ is inherent to the scattering properties especially in our case where we are interested only in a specific grated material and we want to further understand the dissemination of light in that surface.
+
+#### Ambient Occlusion
+The ambient occlusion addition in the shader introduces a mathematical technique to simulate the darkening of crevices and corners due to ambient lighting. It leverages the principles of ray tracing and sampling theory to simulate the darkening of crevices and corners due to ambient lighting. We may improve the realism of the scene by multiplying the diffuse illumination by an ambient occlusion texture or doing it directly in the shader. Ray-tracing concepts and sample patterns are used to accomplish this. To calculate the occlusion factor at each pixel, the shader samples the immediate area. We approximate the quantity of ambient light obstructed by neighboring geometry by directing numerous beams in various directions and adding the findings. The diffuse lighting is then modulated using the obtained occlusion values, darkening sections that are more occluded and maintaining brightness in unoccluded places.
+
+```GLSL
+float3 calculateAmbientOcclusion(float2 uv)
+            {
+                return tex2D(_AmbientOcclusionTex, uv).rgb;
+            }
+
+```
